@@ -8,7 +8,8 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(tf2_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -20,7 +21,7 @@ if(BUILD_TESTING)
 endif()
 
 add_executable(node_pose_publisher src/pose_publisher.cpp)
-ament_target_dependencies(node_pose_publisher rclcpp geometry_msgs tf2_msgs)
+ament_target_dependencies(node_pose_publisher rclcpp geometry_msgs tf2 tf2_ros)
 
 install(TARGETS
   node_pose_publisher
