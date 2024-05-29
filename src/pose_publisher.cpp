@@ -1,16 +1,18 @@
 #include "rclcpp/rclcpp.hpp"
 
-using namespace std::chrono_literals;
-
-int main(int argc, char *argv[]) {
-    rclcpp::init(argc, argv);
-
-    auto node = rclcpp::Node::make_shared("node_pose_publisher");
-
-    while (rclcpp::ok()) {
-        rclcpp::spin_some(node);
+class PosePubNode : public rclcpp::Node
+{
+public:
+    PosePubNode() : Node("node_pose_publisher") {
+        RCLCPP_INFO(get_logger(),  "Connection established");
     }
-    
+
+};
+
+int main(int argc, char **argv)
+{
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<PosePubNode>());
     rclcpp::shutdown();
     return 0;
 }
