@@ -34,8 +34,6 @@ public:
             this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(topic_republish, 1);
         RCLCPP_DEBUG(get_logger(),  "Pose_publisher created with topic: %s", topic_republish.c_str());
 
-        std::chrono::milliseconds timer_period{500};
-
         // Call timer_callback function every timer_period
         timer_ = this->create_wall_timer(
             timer_period, std::bind(&PosePubNode::timer_callback, this));
@@ -43,16 +41,21 @@ public:
 
     void read_parameters()
     {
+        double rate{50.0};
         // Declare and acquire parameters
+        declare_parameter<double>("rate", rate);
         declare_parameter<std::string>("robot", tf_prefix);
         declare_parameter<std::string>("map", map_frame);
         declare_parameter<std::string>("base_link", base_frame);
         declare_parameter<std::string>("pose", topic_republish);
 
+        get_parameter("rate", rate);
         get_parameter("robot", tf_prefix);
         get_parameter("map", map_frame);
         get_parameter("base_link", base_frame);
         get_parameter("pose", topic_republish);
+
+        timer_period = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(1.0 / rate));
     }
 
 private:
@@ -104,6 +107,7 @@ private:
     std::string map_frame{"map"};
     std::string base_frame{"base_link"};
     std::string topic_republish{"pose"};
+    std::chrono::microseconds timer_period{500'000};
     rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_publisher_{nullptr};
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
