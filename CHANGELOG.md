@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4-rc01] - 2024-05-30
+### Changed
+- Migrated `pose_publisher` from `ROS 1` to `ROS 2`.
+
 ## [0.1.3] - 2023-11-14
 ### Fixed
 - Fixed launch install folder
