@@ -17,7 +17,7 @@ class PosePubNode : public rclcpp::Node
 public:
     PosePubNode() : Node("node_pose_publisher")
     {
-        RCLCPP_INFO(get_logger(),  "Connection established");
+        RCLCPP_DEBUG(get_logger(),  "Connection established");
 
         // Read parameters from the parameter server
         RCLCPP_DEBUG(get_logger(), "Reading parameters from server");
@@ -31,10 +31,9 @@ public:
 
         // Create pose_publisher publisher
         pose_publisher_ =
-            this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(topic_republish, 1);        
-        RCLCPP_INFO(get_logger(),  "Pose_publisher created with topic: %s", topic_republish.c_str());
-        
-        // std::chrono::seconds timer_period(1);
+            this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(topic_republish, 1);
+        RCLCPP_DEBUG(get_logger(),  "Pose_publisher created with topic: %s", topic_republish.c_str());
+
         std::chrono::milliseconds timer_period{500};
 
         // Call timer_callback function every timer_period
@@ -56,43 +55,34 @@ public:
         get_parameter("pose", topic_republish);
     }
 
-
 private:
     void timer_callback()
     {
-        RCLCPP_INFO(get_logger(),  "In timer_callback");
-
-        std::string fromFrameRel = (tf_prefix + "/" + base_frame).c_str();
-        std::string toFrameRel = (tf_prefix + "/" + map_frame).c_str();
-
-        // std::string fromFrameRel = (tf_prefix + "/" + map_frame).c_str();
-        // std::string toFrameRel = (tf_prefix + "/" + base_frame).c_str();
-
-        RCLCPP_INFO(get_logger(),  "fromFrameRel topic (target_frame): %s", fromFrameRel.c_str());
-        RCLCPP_INFO(get_logger(),  "toFrameRel topic (source_frame): %s",toFrameRel.c_str());
+        const std::string fromFrame = (tf_prefix + "/" + base_frame).c_str();
+        const std::string toFrame = (tf_prefix + "/" + map_frame).c_str();
 
         geometry_msgs::msg::TransformStamped tf_transform;
         bool tf_ok = true;
 
+        // Look up for the transformation between fromFrame and toFrame frames
         try {
             tf_transform = tf_buffer_->lookupTransform(
-                toFrameRel, fromFrameRel,
+                toFrame, fromFrame,
                 tf2::TimePointZero);
         } catch (const tf2::TransformException & ex) {
-            RCLCPP_INFO(
+            RCLCPP_WARN(
                 get_logger(), "Could not transform %s to %s: %s",
-                toFrameRel.c_str(), fromFrameRel.c_str(), ex.what());
+                toFrame.c_str(), fromFrame.c_str(), ex.what());
             tf_ok = false;
             return;
         }
 
         if(tf_ok)
         {
-            RCLCPP_INFO(get_logger(),  "TF okey");
-
+            // Publish the TF transformation
+            RCLCPP_DEBUG(get_logger(), "Publishing the TF transformation");
             geometry_msgs::msg::PoseWithCovarianceStamped pose_stamped;
-            pose_stamped.header.stamp = rclcpp::Clock{}.now();
-            //pose_stamped.header.stamp = rclcpp::Time{};
+            pose_stamped.header.stamp = tf_transform.header.stamp;
             pose_stamped.header.frame_id = tf_prefix + "/" + map_frame;
 
             pose_stamped.pose.pose.position.x = tf_transform.transform.translation.x;
@@ -108,13 +98,12 @@ private:
         }
     }
 
-    /* Here it is created the shared pointers to the Publisher and timer objects
-    * defined above, and it is also created the variable count*/
+    // Create the shared variables, pointers and timer objects
     rclcpp::TimerBase::SharedPtr timer_{nullptr};
-    std::string tf_prefix = "robot";
-    std::string map_frame = "map";
-    std::string base_frame = "base_link";
-    std::string topic_republish = "pose";
+    std::string tf_prefix{"robot"};
+    std::string map_frame{"map"};
+    std::string base_frame{"base_link"};
+    std::string topic_republish{"pose"};
     rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_publisher_{nullptr};
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
