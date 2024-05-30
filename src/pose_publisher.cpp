@@ -41,21 +41,21 @@ public:
 
     void read_parameters()
     {
-        double rate{50.0};
+        double frequency{50.0};
         // Declare and acquire parameters
-        declare_parameter<double>("rate", rate);
-        declare_parameter<std::string>("robot", tf_prefix);
-        declare_parameter<std::string>("map", map_frame);
-        declare_parameter<std::string>("base_link", base_frame);
-        declare_parameter<std::string>("pose", topic_republish);
+        declare_parameter<double>("frequency", frequency);
+        declare_parameter<std::string>("tf_prefix", tf_prefix);
+        declare_parameter<std::string>("map_frame", map_frame);
+        declare_parameter<std::string>("base_frame", base_frame);
+        declare_parameter<std::string>("topic_republish", topic_republish);
 
-        get_parameter("rate", rate);
-        get_parameter("robot", tf_prefix);
-        get_parameter("map", map_frame);
-        get_parameter("base_link", base_frame);
-        get_parameter("pose", topic_republish);
+        get_parameter("frequency", frequency);
+        get_parameter("tf_prefix", tf_prefix);
+        get_parameter("map_frame", map_frame);
+        get_parameter("base_frame", base_frame);
+        get_parameter("topic_republish", topic_republish);
 
-        timer_period = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(1.0 / rate));
+        timer_period = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(1.0 / frequency));
     }
 
 private:
