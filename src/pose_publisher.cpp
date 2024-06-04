@@ -1,6 +1,7 @@
 #include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
+#include <rclcpp/qos.hpp>
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
@@ -31,7 +32,7 @@ public:
 
         // Create pose_publisher publisher
         pose_publisher_ =
-            this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(topic_republish, 1);
+            this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(topic_republish, rclcpp::QoS(1).keep_last(1).reliable().transient_local());
         RCLCPP_DEBUG(get_logger(),  "Pose_publisher created with topic: %s", topic_republish.c_str());
 
         // Call timer_callback function every timer_period
