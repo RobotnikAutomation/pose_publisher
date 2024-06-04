@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.4-rc01] - 2024-05-30
+### Added
+- Added in `src/pose_publisher.cpp` proper QoS profile:
+ - History (Depth): KEEP_LAST (1)
+ - Reliability: RELIABLE
+ - Durability: TRANSIENT_LOCAL
+
 ### Changed
-- Migrated `pose_publisher` from `ROS 1` to `ROS 2`.
+- Migrated `src/pose_publisher.cpp` from `ROS 1` to `ROS 2`.
 
 ## [0.1.3] - 2023-11-14
 ### Fixed
