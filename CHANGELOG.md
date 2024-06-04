@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4-rc02] - 2024-06-04
+
 ### Added
 - Added in `src/pose_publisher.cpp` proper QoS profile:
  - History (Depth): KEEP_LAST (1)
