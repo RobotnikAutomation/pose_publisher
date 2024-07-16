@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- node pose_publisher arguments -->
+    <arg name="robot_id" default="$(env ROBOT_ID robot)"/>
+    <arg name="node_name" default="$(env NODE_NAME node_pose_publisher)"/>
+
+    <arg name="frequency" default="$(env POSE_PUBLISHER_FREQUENCY 50.0)"/>
+    <arg name="tf_prefix" default="$(env ROBOT_ID robot)"/>
+    <arg name="map_frame" default="$(env MAP_FRAME map)"/>
+    <arg name="base_frame" default="$(env POSE_PUBLISHER_BASE_FRAME_SUFFIX base_link)"/>
+    <arg name="topic_republish" default="$(env POSE_PUBLISHER_TOPIC_REPUB pose)"/>
+
+    <!-- pose_publisher -->
+    <node pkg="pose_publisher"
+        exec="node_pose_publisher"
+        name="$(var node_name)" 
+        namespace="/$(var robot_id)"
+        output="screen">
+
+        <param
+            name="frequency" 
+            value="$(var frequency)"
+        />
+        <param
+            name="tf_prefix" 
+            value="$(var tf_prefix)"
+        />
+        <param
+            name="map_frame" 
+            value="$(var map_frame)"
+        />
+        <param
+            name="base_frame" 
+            value="$(var base_frame)"
+        />
+        <param
+            name="topic_republish" 
+            value="$(var topic_republish)"
+        />
+    </node>
+
+</launch>
